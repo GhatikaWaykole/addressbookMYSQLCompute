@@ -1,0 +1,158 @@
+UC 1 - Use SQL Client to create DB and DB records 
+create database addressbook;
++--------------------+
+| Database           |
++--------------------+
+| addressbook        |
+| information_schema |
+| mysql              |
+| performance_schema |
+| sys                |
++--------------------+
+UC2 - Ability to create a Address Book Table with first and last names, address, city, state, zip, phone number and email as its attributes
+CREATE TABLE addressbook(
+    -> firstName VARCHAR(100) NOT NULL,
+    -> lastName VARCHAR(100) NOT NULL,
+    -> address VARCHAR(100) NOT NULL,
+    -> city VARCHAR(100) NOT NULL,
+    -> state VARCHAR(100) NOT NULL,
+    -> email VARCHAR(100) NOT NULL,
+    -> zip INT(12) NOT NULL,
+    -> phone INT(12) NOT NULL
+    -> );
+DESCRIBE addressbook;
++-----------+--------------+------+-----+---------+-------+
+| Field     | Type         | Null | Key | Default | Extra |
++-----------+--------------+------+-----+---------+-------+
+| firstName | varchar(100) | NO   |     | NULL    |       |
+| lastName  | varchar(100) | NO   |     | NULL    |       |
+| address   | varchar(100) | NO   |     | NULL    |       |
+| city      | varchar(100) | NO   |     | NULL    |       |
+| state     | varchar(100) | NO   |     | NULL    |       |
+| email     | varchar(100) | NO   |     | NULL    |       |
+| zip       | int          | NO   |     | NULL    |       |
+| phone     | int          | NO   |     | NULL    |       |
++-----------+--------------+------+-----+---------+-------+
+
+
+UC 3 - Ability to insert new Contacts to Address Book
+
+INSERT INTO addressbook VALUE("mayura","kolhe","sarasvatinagar","jalgoan","maharashra","aba@cba.aaa",1234,1111111111);
+
+SELECT * FROM addressbook;
++-----------+----------+----------------+---------+------------+-------------+------+------------+
+| firstName | lastName | address        | city    | state      | email       | zip  | phone      |
++-----------+----------+----------------+---------+------------+-------------+------+------------+
+| mayura    | kolhe    | sarasvatinagar | jalgoan | maharashra | aba@cba.aaa | 1234 | 1111111111 |
++-----------+----------+----------------+---------+------------+-------------+------+------------+
+1 row in set (0.03 sec)
+
+UC 4 - Ability to edit existing contact person  using their name
+
+UPDATE addressbook
+    -> SET
+    -> address = "sarasvaatinagar"
+    -> WHERE
+    -> firstName = "mayura";
+Query OK, 1 row affected (0.27 sec)
+UC 5 - Ability to delete a person  using person's name
+
+DELETE from addressbook WHERE firstName = "mayura";
+UC 6 - Ability to Retrieve Person belonging to a City or State from the Address Book
+
+SELECT * from addressbook
+    -> WHERE state =  "maharashra" || city = "jalgoan";
++-----------+----------+-----------------+---------+------------+-------------+------+------------+
+| firstName | lastName | address         | city    | state      | email       | zip  | phone      |
++-----------+----------+-----------------+---------+------------+-------------+------+------------+
+| mayura    | kolhe    | sarasvaatinagar | jalgoan | maharashra | aba@cba.aaa | 1234 | 1111111111 |
++-----------+----------+-----------------+---------+------------+-------------+------+------------+
+1 row in set, 1 warning (0.00 sec)
+
+UC 7 - Ability to understand the size of address book by City and State
+
+select COUNT(*) from addressbook;
++----------+
+| COUNT(*) |
++----------+
+|        1 |
++----------+
+1 row in set (0.07 sec)
+
+Select Count(city) from addressbook;
++-------------+
+| Count(city) |
++-------------+
+|           1 |
++-------------+
+1 row in set (0.09 sec)
+
+ Select Count(state) from addressbook;
++--------------+
+| Count(state) |
++--------------+
+|            1 |
++--------------+
+1 row in set (0.00 sec)
+
+UC 8 - Ability to retrieve entries sorted alphabetically by Person’s name for a given city
+
+ Select firstName
+    -> from addressbook
+    -> where city = "jalgoan"
+    -> ORDER by firstName ASC;
++-----------+
+| firstName |
++-----------+
+| kajal     |
+| mayura    |
++-----------+
+2 rows in set (0.03 sec)
+
+UC 9 - Ability to identify each Address Book with name and Type. - Here the type could Family, Friends,Profession, etc - Alter Address Book to add name and type
+
+alter table addressbook
+    -> add column name varchar(25),
+    -> add coumn type varchar(25);
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'type varchar(25)' at line 3
+mysql> alter table addressbook add (name varchar(25),type varchar(25));
+Query OK, 0 rows affected (2.42 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> select * from addressbook;
++-----------+----------+-----------------+----------+------------+--------------+------+------------+------+------+
+| firstName | lastName | address         | city     | state      | email        | zip  | phone      | name | type |
++-----------+----------+-----------------+----------+------------+--------------+------+------------+------+------+
+| mayura    | kolhe    | sarasvaatinagar | jalgoan  | maharashra | aba@cba.aaa  | 1234 | 1111111111 | NULL | NULL |
+| sanika    | fegade   | hanumannagar    | bhusaval | maharashra | aaa@abca.aaa | 1234 | 1111111111 | NULL | NULL |
+| kajal     | badhe    | shrharinagar    | jalgoan  | maharashra | aaa@abca.aaa | 1234 | 1111111111 | NULL | NULL |
++-----------+----------+-----------------+----------+------------+--------------+------+------------+------+------+
+3 rows in set (0.00 sec)
+
+UPDATE addressbook
+    -> SET type = "family", name = "addressbook1"
+    -> where firstname = "mayura";
+Query OK, 1 row affected (0.16 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> select * from addressbook;
++-----------+----------+-----------------+----------+------------+--------------+------+------------+--------------+--------+
+| firstName | lastName | address         | city     | state      | email        | zip  | phone      | name         | type   |
++-----------+----------+-----------------+----------+------------+--------------+------+------------+--------------+--------+
+| mayura    | kolhe    | sarasvaatinagar | jalgoan  | maharashra | aba@cba.aaa  | 1234 | 1111111111 | addressbook1 | family |
+| sanika    | fegade   | hanumannagar    | bhusaval | maharashra | aaa@abca.aaa | 1234 | 1111111111 | NULL         | NULL   |
+| kajal     | badhe    | shrharinagar    | jalgoan  | maharashra | aaa@abca.aaa | 1234 | 1111111111 | addressbook1 | family |
++-----------+----------+-----------------+----------+------------+--------------+------+------------+--------------+--------+
+3 rows in set (0.00 sec)
+
+UC 10 - Ability to get number
+of contact persons
+i.e. count by type
+
+SELECT count(type) from addressbook;
++-------------+
+| count(type) |
++-------------+
+|           3 |
++-------------+
+1 row in set (0.09 sec)
